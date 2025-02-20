@@ -9146,6 +9146,20 @@ class SVG(Group):
                     # explicit transform, parent transforms, attribute transforms, viewport transforms
                     s = SVG(values)
 
+                    # if we have only one of `s.width` and `s.height` we can deduce the other one
+                    # assuming we have a viewbox.
+                    if s.viewbox is not None:
+                        has_absolute_width = isinstance(s.width, float) or (
+                            isinstance(s.width, Length) and s.width.units != "%"
+                        )
+                        has_absolute_height = isinstance(s.height, float) or (
+                            isinstance(s.height, Length) and s.height.units != "%"
+                        )
+                        if width is None and has_absolute_width and not has_absolute_height:
+                            s.height = s.width * s.viewbox.height / s.viewbox.width
+                        elif height is None and not has_absolute_width and has_absolute_height:
+                            s.width = s.height * s.viewbox.width / s.viewbox.height
+
                     if width is None:
                         # If a dim was not provided but a viewbox was, use the viewbox dim as physical size, else 1000
                         width = (
