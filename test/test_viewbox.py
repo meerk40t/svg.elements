@@ -149,6 +149,13 @@ class TestElementViewbox(unittest.TestCase):
         self.assertEqual(m.width, 4.8 * 100)
         self.assertEqual(m.height, 4.8 * 200)
 
+        q = io.StringIO(u'''<?xml version="1.0" encoding="utf-8" ?>
+                        <svg viewBox="0, 0, 100, 200" height="100%"/>''')
+        m = SVG.parse(q)
+        self.assertEqual(Matrix(m.viewbox_transform), 'scale(1)')
+        self.assertEqual(m.width, 100)
+        self.assertEqual(m.height, 200)
+
     def test_viewbox_incomplete_width_viewbox_default_dimensions(self):
         q = io.StringIO(u'''<?xml version="1.0" encoding="utf-8" ?>
                         <svg viewBox="0, 0, 100, 200" width="400"/>''')
@@ -163,6 +170,13 @@ class TestElementViewbox(unittest.TestCase):
         self.assertEqual(Matrix(m.viewbox_transform), 'scale(9.6)')
         self.assertEqual(m.width, 9.6 * 100)
         self.assertEqual(m.height, 9.6 * 200)
+
+        q = io.StringIO(u'''<?xml version="1.0" encoding="utf-8" ?>
+                        <svg viewBox="0, 0, 100, 200" width="100%"/>''')
+        m = SVG.parse(q)
+        self.assertEqual(Matrix(m.viewbox_transform), 'scale(1)')
+        self.assertEqual(m.width, 100)
+        self.assertEqual(m.height, 200)
 
     def test_viewbox_aspect_ratio_xMinMax(self):
         q = io.StringIO(u'''<?xml version="1.0" encoding="utf-8" ?>
